@@ -37,6 +37,8 @@ def test_java_exporter_keeps_conservative_names():
 def test_java_exporter_handles_actual_header_regressions():
     text = (JAVA_DIR / "GdtToR2SdbText.java").read_text()
     assert "isAnonymousAggregateComponent" in text
+    assert "isSyntheticComponentName" in text
+    assert "field7_0x38" in text
     assert "appendComponent" in text
     assert "UnityEngine_UIElements_UnsignedIntegerField_UxmlFactory_Fields" in text
     assert "do not classify user structures" in text

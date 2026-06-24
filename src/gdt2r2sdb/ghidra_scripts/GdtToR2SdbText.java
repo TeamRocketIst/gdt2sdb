@@ -285,9 +285,22 @@ public class GdtToR2SdbText extends GhidraScript {
         if (!(base instanceof Structure || base instanceof Union)) {
             return false;
         }
+
+        // Ghidra sometimes gives anonymous union/struct components synthetic names
+        // like field7_0x38 instead of leaving getFieldName() empty.  If we do not
+        // treat those as anonymous aggregates, IL2CPP MethodInfo-style anonymous
+        // unions export as field7_0x38/field8_0x40 instead of their real members:
+        // rgctx_data, methodMetadataHandle, genericMethod, genericContainerHandle.
         String explicit = c.getFieldName();
-        if (explicit != null && explicit.trim().length() > 0) {
-            return false;
+        String def = c.getDefaultFieldName();
+        if (explicit == null || explicit.trim().length() == 0) {
+            return true;
+        }
+        if (isSyntheticComponentName(explicit)) {
+            return true;
+        }
+        if (isSyntheticComponentName(def) && explicit.equals(def)) {
+            return true;
         }
         return isAnonymousAggregate(base);
     }
@@ -302,7 +315,19 @@ public class GdtToR2SdbText extends GhidraScript {
         }
         String k = n.trim().toLowerCase();
         return k.length() == 0 || k.startsWith("anon") || k.startsWith("<anonymous") ||
-            k.indexOf("anonymous") >= 0 || k.indexOf("unnamed") >= 0;
+            k.indexOf("anonymous") >= 0 || k.indexOf("unnamed") >= 0 ||
+            isSyntheticComponentName(k) || k.matches("(struct|union)_?\\d+.*");
+    }
+
+    private boolean isSyntheticComponentName(String name) {
+        if (name == null) {
+            return false;
+        }
+        String k = name.trim().toLowerCase();
+        return k.matches("field\\d+(_0x[0-9a-f]+)?") ||
+            k.matches("field_\\d+(_0x[0-9a-f]+)?") ||
+            k.matches("anon_?(struct|union)?_?\\d+.*") ||
+            k.matches("(struct|union)_?\\d+.*");
     }
 
     private void emitEnum(Enum e) {

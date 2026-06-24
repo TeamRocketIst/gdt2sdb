@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Build/package output
+build/
+dist/
+*.egg-info/
+
+# Generated Ghidra/r2 artifacts
+*.gdt
+*.sdb
+*.sdbtxt
+*.sdb.txt
+gdt2r2_work/
+__gdt2r2_sanitized__*.h
+
+# Patch files from ChatGPT/manual testing
+*.patch
+*.diff
+
+# Local editor/OS files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
