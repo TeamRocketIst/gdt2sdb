@@ -57,7 +57,7 @@ gdt2sdb \
 ## Verify fields against the original header
 
 ```sh
-gdt2r2sdb-verify out_il2cppdumper/il2cpp_ghidra.h --sdbtxt il2cpp.sdbtxt
+gdt2sdb-verify out_il2cppdumper/il2cpp_ghidra.h --sdbtxt il2cpp.sdbtxt
 ```
 
 A good result is:
@@ -114,7 +114,7 @@ GDT2R2SDB_REAL_HEADER=/path/to/il2cpp_ghidra.h pytest
 and after conversion:
 
 ```sh
-gdt2r2sdb-verify /path/to/il2cpp_ghidra.h --sdbtxt il2cpp.sdbtxt
+gdt2sdb-verify /path/to/il2cpp_ghidra.h --sdbtxt il2cpp.sdbtxt
 ```
 
 Expected target:
