@@ -44,6 +44,48 @@ tk~UnityEngine_MonoBehaviour_Fields
 ```
 
 
+
+## radare2 loader scripts for huge SDBs
+
+Some radare2 versions can read a huge compiled `.sdb` with `r2sdb`, but `tos ./il2cpp.sdb` may fail to expose every key through `tk`/`ts` after loading. In that case, generate a plain r2 script that recreates the same type database with `tk key=value` commands and bypasses the `tos` import path:
+
+```sh
+gdt2sdb-r2loader \
+  --sdbtxt il2cpp.sdbtxt \
+  --out-r2 il2cpp_types.r2
+```
+
+Load it from the r2 command line:
+
+```sh
+r2 -q -i il2cpp_types.r2 libil2cpp.so
+```
+
+or inside an existing r2 session:
+
+```r2
+. ./il2cpp_types.r2
+```
+
+The loader script appends primitive re-prime commands such as `tk type.int32_t=d` and `tk type.bool=b`, because `to`/`tos` style imports may leave primitive records missing or overwritten in some r2 sessions.
+
+For smaller files on disk, write a compressed loader:
+
+```sh
+gdt2sdb-r2loader \
+  --sdbtxt il2cpp.sdbtxt \
+  --out-r2 il2cpp_types.r2.gz \
+  --gzip
+```
+
+Run the compressed loader without creating a permanent decompressed file by using shell process substitution:
+
+```sh
+r2 -q -i <(gzip -dc il2cpp_types.r2.gz) libil2cpp.so
+```
+
+This avoids the `tos` path, but it does not remove radare2's `tp`/`pf` format-string limits for very large nested structs. If `tp SomeClass_o` expands too much, print the field payload directly instead, for example `tp SomeClass_Fields @ object_address + 0x10` for normal 64-bit IL2CPP objects.
+
 ## r2-friendly subset SDBs for huge IL2CPP databases
 
 For very large IL2CPP projects, radare2 may load the compiled `.sdb` but fail to expose every key through `tos`/`tk`, or `ts` may return a truncated/blank print format for a specific large object. The full `il2cpp.sdbtxt` remains the source of truth; use `gdt2sdb-subset` to build a small dependency slice for the root type you want to inspect interactively.

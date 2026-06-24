@@ -57,3 +57,8 @@ def test_copy_ghidra_scripts(tmp_path):
 def test_pyproject_exposes_subset_cli():
     text = (ROOT / "pyproject.toml").read_text()
     assert 'gdt2sdb-subset = "gdt2r2sdb.subset:main"' in text
+
+
+def test_pyproject_exposes_r2loader_cli():
+    text = (ROOT / "pyproject.toml").read_text()
+    assert 'gdt2sdb-r2loader = "gdt2r2sdb.loader:main"' in text

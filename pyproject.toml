@@ -21,6 +21,7 @@ classifiers = [
 gdt2sdb = "gdt2r2sdb.cli:main"
 gdt2sdb-verify = "gdt2r2sdb.verify:main"
 gdt2sdb-subset = "gdt2r2sdb.subset:main"
+gdt2sdb-r2loader = "gdt2r2sdb.loader:main"
 
 [project.optional-dependencies]
 test = ["pytest>=7"]
