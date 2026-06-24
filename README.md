@@ -67,7 +67,7 @@ or inside an existing r2 session:
 . ./il2cpp_types.r2
 ```
 
-The loader script appends primitive re-prime commands such as `tk type.int32_t=d` and `tk type.bool=b`, because `to`/`tos` style imports may leave primitive records missing or overwritten in some r2 sessions.
+The loader script appends primitive re-prime commands such as `tk type.int32_t=d` and `tk type.bool=b`, because `to`/`tos` style imports may leave primitive records missing or overwritten in some r2 sessions. It temporarily disables `scr.color` and `scr.utf8` while loading so progress output stays plain, then restores interactive-friendly values at the end with `e scr.color=auto` and `e scr.utf8=true`. Use `--no-restore-settings` if you do not want those footer commands.
 
 For smaller files on disk, write a compressed loader:
 
@@ -78,10 +78,13 @@ gdt2sdb-r2loader \
   --gzip
 ```
 
-Run the compressed loader without creating a permanent decompressed file by using shell process substitution:
+Compressed loaders are intended for storage/transport. Decompress to a real temporary `.r2` file before loading; piping or shell process substitution can hit r2 input-size/path issues with very large scripts:
 
 ```sh
-r2 -q -i <(gzip -dc il2cpp_types.r2.gz) libil2cpp.so
+tmp="$(mktemp --suffix=.r2)"
+gzip -dc il2cpp_types.r2.gz > "$tmp"
+r2 -q -i "$tmp" libil2cpp.so
+rm -f "$tmp"
 ```
 
 This avoids the `tos` path, but it does not remove radare2's `tp`/`pf` format-string limits for very large nested structs. If `tp SomeClass_o` expands too much, print the field payload directly instead, for example `tp SomeClass_Fields @ object_address + 0x10` for normal 64-bit IL2CPP objects.

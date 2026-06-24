@@ -43,9 +43,25 @@ def test_write_r2_loader_plain(tmp_path):
     assert "tk struct.Demo_Fields.enabled=bool,4,0\n" in text
     # Primitive fixups are appended even if records already existed, so the loader
     # repairs r2 sessions where imports clobbered primitive type records.
-    assert text.rstrip().endswith("tk type.double.size=64")
+    assert "tk type.double.size=64\n" in text
+    assert text.rstrip().endswith("e scr.utf8=true")
+    assert "e scr.color=false\n" in text
+    assert "e scr.color=auto\n" in text
     assert "tk type.int32_t=d\n" in text
     assert "tk type.bool=b\n" in text
+
+
+def test_write_r2_loader_can_skip_restore_settings(tmp_path):
+    src = tmp_path / "types.sdbtxt"
+    out = tmp_path / "types.r2"
+    write_demo(src)
+
+    write_r2_loader(src, out, progress_interval=0, quiet=True, restore_settings=False)
+    text = out.read_text(encoding="utf-8")
+
+    assert "e scr.color=false\n" in text
+    assert "e scr.color=auto\n" not in text
+    assert "e scr.utf8=true\n" not in text
 
 
 def test_write_r2_loader_gzip(tmp_path):

@@ -45,11 +45,24 @@ class R2LoaderError(SystemExit):
 
 
 def _write_header(fp: TextIO, *, quiet: bool) -> None:
+    # Keep loader output deterministic while the script runs.  The footer
+    # restores the user-visible settings that we temporarily disable here.
     fp.write("e scr.color=false\n")
     fp.write("e scr.utf8=false\n")
     fp.write("e bin.cache=true\n")
     if not quiet:
         fp.write("?e loading r2 type keys from generated gdt2sdb loader\n")
+
+
+def _write_footer(fp: TextIO, *, quiet: bool, restore_settings: bool) -> None:
+    if not quiet:
+        fp.write("?e done loading gdt2sdb r2 type loader\n")
+    if restore_settings:
+        # r2 scripts do not have a portable way to snapshot arbitrary eval
+        # variables before changing them, so restore the interactive-friendly
+        # values most users expect after loading.
+        fp.write("e scr.color=auto\n")
+        fp.write("e scr.utf8=true\n")
 
 
 def _write_primitive_fixups(fp: TextIO, *, quiet: bool) -> None:
@@ -67,6 +80,7 @@ def write_r2_loader(
     progress_interval: int = 50_000,
     primitive_fixups: bool = True,
     quiet: bool = False,
+    restore_settings: bool = True,
 ) -> int:
     """Write an r2 script containing `tk key=value` commands for every SDB text record."""
     records = read_sdb_text(sdbtxt)
@@ -89,6 +103,7 @@ def write_r2_loader(
             _write_primitive_fixups(fp, quiet=quiet)
         if not quiet:
             fp.write(f"?e done loading {len(records)} type keys\n")
+        _write_footer(fp, quiet=True, restore_settings=restore_settings)
     return len(records)
 
 
@@ -114,6 +129,11 @@ def build_argparser() -> argparse.ArgumentParser:
         help="do not append primitive type re-prime commands such as `tk type.int32_t=d`",
     )
     ap.add_argument("--quiet", action="store_true", help="do not include progress/status messages in the generated script")
+    ap.add_argument(
+        "--no-restore-settings",
+        action="store_true",
+        help="do not append commands that restore scr.color and scr.utf8 after loading",
+    )
     return ap
 
 
@@ -128,13 +148,14 @@ def main(argv: list[str] | None = None) -> int:
         progress_interval=max(0, int(ns.progress_interval)),
         primitive_fixups=not ns.no_primitive_fixups,
         quiet=bool(ns.quiet),
+        restore_settings=not ns.no_restore_settings,
     )
     if not ns.quiet:
         kind = "compressed r2 loader" if ns.gzip else "r2 loader"
         print(f"[+] wrote {kind}: {out_path}")
         print(f"[+] records: {count}")
         if ns.gzip:
-            print(f"[+] bash/zsh: r2 -q -i <(gzip -dc {out_path}) ./binary")
+            print(f"[+] gzip is intended for storage/transport; decompress to a real .r2 file before loading")
         else:
             print(f"[+] load in r2: . {out_path}")
             print(f"[+] command line: r2 -q -i {out_path} ./binary")
