@@ -1,5 +1,5 @@
 //@category Data Types
-//@author gdt2r2sdb
+//@author ada-l0velace
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
