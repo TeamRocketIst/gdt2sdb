@@ -44,6 +44,8 @@ def test_java_exporter_handles_actual_header_regressions():
     assert "do not classify user structures" in text
     assert "Cannot resolve type 'type.Il2CppMethodPointer'" in text
     assert 'kv("type." + name, "p")' in text
+    assert "valueTypeObjectFields" in text
+    assert "r2Type(fieldType)" in text
 
 
 def test_copy_ghidra_scripts(tmp_path):

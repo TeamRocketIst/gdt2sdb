@@ -80,3 +80,35 @@ struct UnityEngine_UIElements_UnsignedIntegerField_UxmlFactory_Fields {
 };
 struct UnityEngine_UIElements_UxmlUnsignedIntAttributeDescription___c_Fields {
 };
+
+
+struct UnityEngine_Color_Fields {
+    float r;
+    float g;
+    float b;
+    float a;
+};
+struct UnityEngine_Color_o {
+    UnityEngine_Color_Fields fields;
+};
+struct UnityEngine_Vector3_Fields {
+    float x;
+    float y;
+    float z;
+};
+struct UnityEngine_Vector3_o {
+    UnityEngine_Vector3_Fields fields;
+};
+struct initializer_Fields {
+    UnityEngine_MonoBehaviour_Fields super;
+    struct UnityEngine_Color_o styleDeepBlue;
+    struct UnityEngine_Vector3_o buttonStartScale;
+};
+struct initializer_c {
+    Il2CppClass_1 _1;
+};
+struct initializer_o {
+    initializer_c *klass;
+    void *monitor;
+    initializer_Fields fields;
+};

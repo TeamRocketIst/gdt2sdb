@@ -271,14 +271,74 @@ public class GdtToR2SdbText extends GhidraScript {
             }
         }
 
+        DataType fieldType = r2FieldType(base);
         emitDataType(base);
+        if (fieldType != base) {
+            emitDataType(fieldType);
+        }
+
         String fname = componentName(c, "field_" + absoluteOffset);
         fname = uniqueFieldName(cleanName(fname), seen);
         fields.add(fname);
         kv(ownerKind + "." + ownerName + "." + fname,
-            r2Type(base) + "," + absoluteOffset + "," + ai.count);
+            r2Type(fieldType) + "," + absoluteOffset + "," + ai.count);
         kv(ownerKind + "." + ownerName + "." + fname + ".meta",
             ai.count > 0 ? Integer.toString(ai.elementBytes) : "0");
+    }
+
+    private DataType r2FieldType(DataType base) {
+        if (base instanceof Structure) {
+            Structure s = (Structure) base;
+            DataType unboxed = valueTypeObjectFields(s);
+            if (unboxed != null) {
+                return unboxed;
+            }
+        }
+        return base;
+    }
+
+    private DataType valueTypeObjectFields(Structure s) {
+        // IL2CPP value-type object wrappers often look like:
+        //
+        //   struct UnityEngine_Color_o {
+        //       UnityEngine_Color_Fields fields;
+        //   };
+        //
+        // When such a wrapper is embedded by value, radare2 `ts`/`tp` can fail
+        // to build a print format for larger parent structs.  The layout is
+        // identical to the inner *_Fields struct at offset 0, so use the inner
+        // type for field records while still exporting the top-level *_o struct.
+        String name = stableName(s);
+        if (!name.endsWith("_o")) {
+            return null;
+        }
+
+        DataTypeComponent[] comps = s.getDefinedComponents();
+        if (comps.length != 1) {
+            return null;
+        }
+
+        DataTypeComponent only = comps[0];
+        if (only.getOffset() != 0) {
+            return null;
+        }
+
+        String fieldName = cleanName(componentName(only, ""));
+        if (!fieldName.equals("fields")) {
+            return null;
+        }
+
+        DataType inner = unwrapArray(only.getDataType()).base;
+        if (!(inner instanceof Structure)) {
+            return null;
+        }
+
+        String expected = name.substring(0, name.length() - 2) + "_Fields";
+        if (!stableName(inner).equals(expected)) {
+            return null;
+        }
+
+        return inner;
     }
 
     private boolean isAnonymousAggregateComponent(DataTypeComponent c, DataType base) {
