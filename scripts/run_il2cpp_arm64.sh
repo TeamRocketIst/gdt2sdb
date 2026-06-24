@@ -10,7 +10,7 @@ HEADER="$1"
 OUT="$2"
 GHIDRA="${3:-${GHIDRA_HEADLESS:-$HOME/Applications/ghidra_12.0.4_PUBLIC/support/analyzeHeadless}}"
 
-gdt2r2sdb \
+gdt2sdb \
   --header "$HEADER" \
   --out-gdt "${OUT}.gdt" \
   --out-sdbtxt "${OUT}.sdbtxt" \
@@ -20,6 +20,6 @@ gdt2r2sdb \
   --bits 64 \
   --ghidra "$GHIDRA"
 
-gdt2r2sdb-verify "$HEADER" --sdbtxt "${OUT}.sdbtxt"
+gdt2sdb-verify "$HEADER" --sdbtxt "${OUT}.sdbtxt"
 
 echo "load in r2 with: tos ${OUT}.sdb"

@@ -1,6 +1,6 @@
-# gdt2r2sdb
+# gdt2sdb
 
-`gdt2r2sdb` converts C headers or existing Ghidra `.gdt` data type archives into radare2 type SDB databases.
+`gdt2sdb` converts C headers or existing Ghidra `.gdt` data type archives into radare2 type SDB databases.
 
 The Java Ghidra scripts in this project:
 ```text
@@ -22,7 +22,7 @@ python3 -m pip install -e .
 export GHIDRA_HOME="$HOME/Applications/ghidra_12.0.4_PUBLIC"
 export GHIDRA_HEADLESS="$GHIDRA_HOME/support/analyzeHeadless"
 
-gdt2r2sdb \
+gdt2sdb \
   --header out_il2cppdumper/il2cpp_ghidra.h \
   --out-gdt il2cpp.gdt \
   --out-sdbtxt il2cpp.sdbtxt \
@@ -44,7 +44,7 @@ tk~UnityEngine_MonoBehaviour_Fields
 ## Convert an existing GDT
 
 ```sh
-gdt2r2sdb \
+gdt2sdb \
   --gdt il2cpp.gdt \
   --out-sdbtxt il2cpp.sdbtxt \
   --out-sdb il2cpp.sdb \
