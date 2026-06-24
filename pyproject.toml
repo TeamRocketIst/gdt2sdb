@@ -20,6 +20,7 @@ classifiers = [
 [project.scripts]
 gdt2sdb = "gdt2r2sdb.cli:main"
 gdt2sdb-verify = "gdt2r2sdb.verify:main"
+gdt2sdb-subset = "gdt2r2sdb.subset:main"
 
 [project.optional-dependencies]
 test = ["pytest>=7"]

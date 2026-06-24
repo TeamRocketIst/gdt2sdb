@@ -52,3 +52,8 @@ def test_copy_ghidra_scripts(tmp_path):
     copy_ghidra_scripts(tmp_path)
     assert (tmp_path / "HeaderToGdt.java").is_file()
     assert (tmp_path / "GdtToR2SdbText.java").is_file()
+
+
+def test_pyproject_exposes_subset_cli():
+    text = (ROOT / "pyproject.toml").read_text()
+    assert 'gdt2sdb-subset = "gdt2r2sdb.subset:main"' in text

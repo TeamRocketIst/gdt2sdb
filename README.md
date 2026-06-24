@@ -43,6 +43,30 @@ ts Il2CppClass
 tk~UnityEngine_MonoBehaviour_Fields
 ```
 
+
+## r2-friendly subset SDBs for huge IL2CPP databases
+
+For very large IL2CPP projects, radare2 may load the compiled `.sdb` but fail to expose every key through `tos`/`tk`, or `ts` may return a truncated/blank print format for a specific large object. The full `il2cpp.sdbtxt` remains the source of truth; use `gdt2sdb-subset` to build a small dependency slice for the root type you want to inspect interactively.
+
+```sh
+gdt2sdb-subset \
+  --sdbtxt il2cpp.sdbtxt \
+  --root SomeController_o \
+  --out-sdbtxt SomeController.subset.sdbtxt \
+  --out-sdb SomeController.subset.sdb \
+  --sdb r2sdb
+```
+
+Then in radare2:
+
+```r2
+tos ./SomeController.subset.sdb
+ts SomeController_o
+tp SomeController_o @ 0xADDRESS
+```
+
+The subset command follows by-value struct/union fields recursively and keeps pointer targets shallow by default, which is usually enough for r2 to print pointer fields as `p`. Use `--follow-pointers` only when you explicitly want pointer target layouts copied too.
+
 ## Convert an existing GDT
 
 ```sh
