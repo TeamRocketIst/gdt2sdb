@@ -356,6 +356,15 @@ public class GdtToR2SdbText extends GhidraScript {
         if (!emittedFuncs.add(name)) {
             return;
         }
+
+        // r2's `ts` resolves field types through type.<name> first.  Ghidra
+        // function-pointer typedefs such as Il2CppMethodPointer and
+        // InvokerMethod should still have full func.<name> metadata, but they
+        // also need pointer-sized primitive type records or `ts MethodInfo`
+        // warns: "Cannot resolve type 'type.Il2CppMethodPointer'".
+        kv("type." + name, "p");
+        kv("type." + name + ".size", Integer.toString(pointerBits));
+
         kv(name, "func");
         ParameterDefinition[] args = f.getArguments();
         kv("func." + name + ".args", Integer.toString(args.length));

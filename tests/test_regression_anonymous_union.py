@@ -63,3 +63,22 @@ def test_java_exporter_treats_ghidra_fieldN_offsets_as_anonymous_components():
     assert "field7_0x38" in java
     assert "rgctx_data, methodMetadataHandle, genericMethod, genericContainerHandle" in java
     assert 'matches("field\\\\d+(_0x[0-9a-f]+)?")' in java
+
+
+def test_function_pointer_typedefs_have_type_records_for_r2_ts():
+    _, _, kv = parse_sdb_text((ROOT / "mini_expected.sdb.txt").read_text())
+
+    # Regression for r2 `ts MethodInfo` warnings like:
+    #   Cannot resolve type 'type.Il2CppMethodPointer' assuming pointer
+    #   Cannot resolve type 'type.InvokerMethod' assuming pointer
+    assert kv["type.Il2CppMethodPointer"] == "p"
+    assert kv["type.Il2CppMethodPointer.size"] == "64"
+    assert kv["type.InvokerMethod"] == "p"
+    assert kv["type.InvokerMethod.size"] == "64"
+
+
+def test_java_exporter_emits_function_pointer_typedef_type_records():
+    java = JAVA_EXPORTER.read_text()
+    assert "Cannot resolve type 'type.Il2CppMethodPointer'" in java
+    assert 'kv("type." + name, "p")' in java
+    assert 'kv("type." + name + ".size", Integer.toString(pointerBits))' in java

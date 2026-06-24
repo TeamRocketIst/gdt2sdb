@@ -42,6 +42,8 @@ def test_java_exporter_handles_actual_header_regressions():
     assert "appendComponent" in text
     assert "UnityEngine_UIElements_UnsignedIntegerField_UxmlFactory_Fields" in text
     assert "do not classify user structures" in text
+    assert "Cannot resolve type 'type.Il2CppMethodPointer'" in text
+    assert 'kv("type." + name, "p")' in text
 
 
 def test_copy_ghidra_scripts(tmp_path):
