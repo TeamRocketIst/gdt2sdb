@@ -13,10 +13,12 @@ The Python package copies those files into a temporary Ghidra script directory a
 ## Install
 
 ```sh
-python3 -m pip install -e .
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
 ```
 
-## Convert an IL2CPP header for ARM64
+## Convert an IL2CPP header for ARM64 (Requires Ghidra)
 
 ```sh
 export GHIDRA_HOME="$HOME/Applications/ghidra_12.0.4_PUBLIC"
