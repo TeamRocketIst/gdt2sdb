@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gdt2r2sdb"
+version = "0.3.0"
+description = "Convert Ghidra GDT/header data types to radare2 type SDB databases"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "gdt2r2sdb contributors" }]
+keywords = ["ghidra", "radare2", "sdb", "reverse-engineering", "il2cpp"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Topic :: Software Development :: Disassemblers",
+]
+
+[project.scripts]
+gdt2r2sdb = "gdt2r2sdb.cli:main"
+gdt2r2sdb-verify = "gdt2r2sdb.verify:main"
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gdt2r2sdb"]
