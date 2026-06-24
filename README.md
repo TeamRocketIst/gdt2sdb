@@ -2,8 +2,7 @@
 
 `gdt2r2sdb` converts C headers or existing Ghidra `.gdt` data type archives into radare2 type SDB databases.
 
-The Java Ghidra scripts are real files in this project, not Python string templates:
-
+The Java Ghidra scripts in this project:
 ```text
 src/gdt2r2sdb/ghidra_scripts/HeaderToGdt.java
 src/gdt2r2sdb/ghidra_scripts/GdtToR2SdbText.java
