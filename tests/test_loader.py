@@ -46,7 +46,7 @@ def test_write_r2_loader_plain(tmp_path):
     assert "tk type.double.size=64\n" in text
     assert text.rstrip().endswith("e scr.utf8=true")
     assert "e scr.color=false\n" in text
-    assert "e scr.color=auto\n" in text
+    assert "e scr.color=1\n" in text
     assert "tk type.int32_t=d\n" in text
     assert "tk type.bool=b\n" in text
 
