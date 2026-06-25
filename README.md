@@ -67,7 +67,7 @@ or inside an existing r2 session:
 . ./il2cpp_types.r2
 ```
 
-The loader script appends primitive re-prime commands such as `tk type.int32_t=d` and `tk type.bool=b`, because `to`/`tos` style imports may leave primitive records missing or overwritten in some r2 sessions. It temporarily disables `scr.color` and `scr.utf8` while loading so progress output stays plain, then restores interactive-friendly values at the end with `e scr.color=auto` and `e scr.utf8=true`. Use `--no-restore-settings` if you do not want those footer commands.
+The loader script appends primitive re-prime commands such as `tk type.int32_t=d` and `tk type.bool=b`, because `to`/`tos` style imports may leave primitive records missing or overwritten in some r2 sessions. It temporarily disables `scr.color` and `scr.utf8` while loading so progress output stays plain, then restores interactive-friendly values at the end with `e scr.color=true` and `e scr.utf8=true`. Use `--no-restore-settings` if you do not want those footer commands.
 
 For smaller files on disk, write a compressed loader:
 

@@ -61,7 +61,7 @@ def _write_footer(fp: TextIO, *, quiet: bool, restore_settings: bool) -> None:
         # r2 scripts do not have a portable way to snapshot arbitrary eval
         # variables before changing them, so restore the interactive-friendly
         # values most users expect after loading.
-        fp.write("e scr.color=auto\n")
+        fp.write("e scr.color=1\n")
         fp.write("e scr.utf8=true\n")
 
 
